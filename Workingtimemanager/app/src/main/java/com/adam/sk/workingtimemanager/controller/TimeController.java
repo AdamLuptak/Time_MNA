@@ -17,6 +17,7 @@ import net.danlew.android.joda.JodaTimeAndroid;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -73,22 +74,24 @@ public class TimeController implements ITimeController {
         return Select.from(WorkTimeRecord.class).where(Condition.prop("leave_date").isNull()).groupBy("arrival_date").first();
     }
 
+
+    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+
     @Override
     public String getGoHomeTimeOv() {
 
-        return new DateTime(goHomeOvMillis).toDate().toString();
+        return formatter.format(new DateTime(goHomeOvMillis).toDate()).toString();
     }
 
     @Override
     public String getGoHomeTime() {
-        return new DateTime(goHomeMillis).toDate().toString();
+        return formatter.format(new DateTime(goHomeMillis).toDate()).toString();
     }
 
     @Override
     public String getOverTime() {
-        return  String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(overTimeMillis),
-                TimeUnit.MILLISECONDS.toMinutes(overTimeMillis) % TimeUnit.HOURS.toMinutes(1),
-                TimeUnit.MILLISECONDS.toSeconds(overTimeMillis) % TimeUnit.MINUTES.toSeconds(1));
+        return  String.format("%02d:%02d", TimeUnit.MILLISECONDS.toHours(overTimeMillis),
+                TimeUnit.MILLISECONDS.toMinutes(overTimeMillis) % TimeUnit.HOURS.toMinutes(1));
 
     }
 
@@ -96,7 +99,7 @@ public class TimeController implements ITimeController {
 
     private WorkTimeRecord getLastWorkTimeRecordNull(long fridayCome) {
         DateTime fridayComeDate = new DateTime(fridayCome).withHourOfDay(0).withSecondOfMinute(0);
-        return Select.from(WorkTimeRecord.class).where(Condition.prop("arrival_date").gt(fridayComeDate.toDate().getTime()), Condition.prop("leave_date").isNull()).groupBy("arrival_date") .first();
+        return Select.from(WorkTimeRecord.class).where(Condition.prop("arrival_date").gt(fridayComeDate.toDate().getTime())).groupBy("arrival_date") .first();
     }
 
     public Long getWeekOverTime(DateTime today) {

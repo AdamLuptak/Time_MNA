@@ -1,10 +1,5 @@
 package com.adam.sk.workingtimemanager;
 
-import android.support.test.runner.AndroidJUnit4;
-import android.test.ActivityInstrumentationTestCase2;
-import android.test.suitebuilder.annotation.LargeTest;
-import android.test.suitebuilder.annotation.SmallTest;
-
 import com.adam.sk.workingtimemanager.controller.TimeController;
 import com.adam.sk.workingtimemanager.entity.WorkTimeRecord;
 import com.annimon.stream.Stream;
@@ -13,25 +8,25 @@ import com.orm.query.Select;
 
 import junit.framework.Assert;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
 import java.util.Date;
 import java.util.List;
 
-@RunWith(AndroidJUnit4.class)
-@LargeTest
-public class TimeControllerTest{
+
+public class TimeControllerTest {
 
     public static final long ARRIVAL_DATE_MILLIS = 1451646000000l;
     public static final long LEAVE_DATE_MILLIS = 1451660400000l;
     public static final long WORK_PERIOD = 30600000l;
+    public static final long FRIDAY_COME = 1452232800000l;
     private Date arrivalDate;
     private Date leaveDate;
-
 
     @Before
     public void mockDb() {
@@ -97,7 +92,7 @@ public class TimeControllerTest{
         friday.save();
     }
 
-    @SmallTest
+    @Test
     public void countOvertime() {
         //  - 00.30.00
 
@@ -107,7 +102,7 @@ public class TimeControllerTest{
         Date arrivalDateFriday = new Date(1454598000000l);
         Date leaveDateFriday = new Date(1454598000000l);
         WorkTimeRecord friday = new WorkTimeRecord(arrivalDateFriday, leaveDateFriday);
-        friday.save();
+        //  friday.save();
 
         Long expectedOverTime = -3900000l;
 
@@ -115,18 +110,36 @@ public class TimeControllerTest{
         DateTime today = new DateTime(1452146400000l); //Thu Jan 07 2016 07:00:00
         Long actualWeekOverTime = WeekOverTime(today);
 
+        timeController.calculateTime(new DateTime(FRIDAY_COME));
+        String goHomeTime1 = timeController.getGoHomeTime();
+        String goHomeTimeOv = timeController.getGoHomeTimeOv();
+        String overTime = timeController.getOverTime();
+
+        Assert.assertEquals("15:30", goHomeTime1);
+        Assert.assertEquals("16:35", goHomeTimeOv);
+        Assert.assertEquals("-1:-5", overTime);
+
+        Long actulaWeekOverTimeReal = timeController.getWeekOverTime(today);
+
+        Assert.assertEquals(expectedOverTime, actulaWeekOverTimeReal);
         Assert.assertEquals(expectedOverTime, actualWeekOverTime);
 
-        WorkTimeRecord fridayComToWork = Select.from(WorkTimeRecord.class).where(Condition.prop("arrival_date").eq(1452232800000l),Condition.prop("leave_date").isNull()).first();
+        WorkTimeRecord fridayComToWork = getLastWorkTimeRecordNull(FRIDAY_COME);
 
         long goHomeTime = fridayComToWork.getArrivalDate().getTime() + WORK_PERIOD;
-        long goHomeOv = goHomeTime + actualWeekOverTime;
+        long goHomeOv = goHomeTime - actualWeekOverTime;
 
-        Assert.assertEquals(goHomeTime, 1452263400000l);
-        Assert.assertEquals(goHomeOv, 1452259500000l);
+        Assert.assertEquals(goHomeTime, 1452263400000l); //Fri Jan 08 2016 15:30:00
+        Assert.assertEquals(goHomeOv, 1452267300000l); //Fri Jan 08 2016 16:35:00
     }
 
-    long workTimePart =0;
+    private WorkTimeRecord getLastWorkTimeRecordNull(long fridayCome) {
+        DateTime fridayComeDate = new DateTime(fridayCome).withHourOfDay(0).withSecondOfMinute(0);
+        return Select.from(WorkTimeRecord.class).where(Condition.prop("arrival_date").gt(fridayComeDate.toDate().getTime()), Condition.prop("leave_date").isNull()).groupBy("arrival_date").first();
+    }
+
+    long workTimePart = 0;
+
     private Long WeekOverTime(DateTime today) {
         DateTime startOfWeek = today.weekOfWeekyear().roundFloorCopy();
         DateTime endOfWeek = today.weekOfWeekyear().roundCeilingCopy();
@@ -135,18 +148,17 @@ public class TimeControllerTest{
         for (int dayOFWeek = 0; dayOFWeek < 7; dayOFWeek++) {
             workTimePart = 0;
             DateTime nextDayCal = startOfWeek.plusDays(dayOFWeek);
-            Stream.of(workTimeRecords).filter(workTimeLambda -> new DateTime(workTimeLambda.getArrivalDate()).getDayOfMonth() == nextDayCal.getDayOfMonth()).forEach(w ->{
+            Stream.of(workTimeRecords).filter(workTimeLambda -> new DateTime(workTimeLambda.getArrivalDate()).getDayOfMonth() == nextDayCal.getDayOfMonth()).forEach(w -> {
                 workTimePart += w.getLeaveDate().getTime() - w.getArrivalDate().getTime();
             });
             workTime += (workTimePart != 0) ? workTimePart - WORK_PERIOD : 0;
         }
-       return workTime;
+        return workTime;
     }
 
     private List<WorkTimeRecord> getWorkTimeRecordsRange(DateTime startOfWeek, DateTime endOfWeek) {
         return Select.from(WorkTimeRecord.class).where(Condition.prop("arrival_date").gt(startOfWeek.toDate().getTime()), Condition.prop("arrival_date").lt(endOfWeek.toDate().getTime()), Condition.prop("leave_date").isNotNull()).groupBy("arrival_date").list();
     }
-
 
     @Test
     public void testSaveWorkTime() throws Exception {
@@ -168,7 +180,6 @@ public class TimeControllerTest{
 
         Assert.assertEquals(expWorkTimeRecord, actualWorkTimeRecordLeaveTime);
     }
-
 
     @After
     public void cleanDb() {
