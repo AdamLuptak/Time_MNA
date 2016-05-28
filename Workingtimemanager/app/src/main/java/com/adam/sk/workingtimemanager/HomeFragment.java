@@ -12,9 +12,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.adam.sk.workingtimemanager.controller.TimeController;
-import com.adam.sk.workingtimemanager.dager.DaggerWorkTimeComponent;
-import com.adam.sk.workingtimemanager.dager.WorkTimeComponent;
-import com.adam.sk.workingtimemanager.dager.WorkTimeModule;
 
 import org.joda.time.DateTime;
 

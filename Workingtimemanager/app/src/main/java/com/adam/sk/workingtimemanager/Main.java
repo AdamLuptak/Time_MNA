@@ -1,7 +1,5 @@
 package com.adam.sk.workingtimemanager;
 
-import android.content.Context;
-
 import com.adam.sk.workingtimemanager.dager.DaggerWorkTimeComponent;
 import com.adam.sk.workingtimemanager.dager.WorkTimeComponent;
 import com.adam.sk.workingtimemanager.dager.WorkTimeModule;
