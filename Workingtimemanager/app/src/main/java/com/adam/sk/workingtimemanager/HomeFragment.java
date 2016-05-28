@@ -3,7 +3,6 @@ package com.adam.sk.workingtimemanager;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.adam.sk.workingtimemanager.controller.TimeController;
-import com.adam.sk.workingtimemanager.controller.api.ITimeController;
 import com.adam.sk.workingtimemanager.dager.DaggerWorkTimeComponent;
 import com.adam.sk.workingtimemanager.dager.WorkTimeComponent;
 import com.adam.sk.workingtimemanager.dager.WorkTimeModule;
@@ -28,7 +26,7 @@ import butterknife.ButterKnife;
 
 
 public class HomeFragment extends Fragment {
-    Context thiscontext;
+    Context thisContext;
 
     @BindView(R.id.label)
     TextView goHome;
@@ -39,11 +37,10 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.textView4)
     TextView goHomeOv;
 
-    private TimeController timeController;
-
+    @Inject
+    public TimeController timeController;
 
     public HomeFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -54,9 +51,13 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-        thiscontext = container.getContext();
+        thisContext = container.getContext();
         ButterKnife.bind(this, rootView);
+
+        ((Main) thisContext.getApplicationContext()).getComponent().inject(this);
 
         final Animation animRotate = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_rotate);
         CircleButton btnScale = (CircleButton) rootView.findViewById(R.id.button2);
@@ -73,8 +74,6 @@ public class HomeFragment extends Fragment {
             goHomeOv.setText(timeController.getGoHomeTimeOv());
             overTime.setText(timeController.getOverTime());
         });
-        WorkTimeComponent component = DaggerWorkTimeComponent.builder().workTimeModule(new WorkTimeModule()).build();
-        timeController = component.provideWorTimeController();
 
         goHome.setText("00:00");
         goHomeOv.setText("00:00");

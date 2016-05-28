@@ -14,9 +14,10 @@ import android.widget.Toast;
 
 import com.adam.sk.workingtimemanager.controller.TimeController;
 
+import javax.inject.Inject;
+
 public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
 
-    private TimeController timeController;
 
 //    @Override
 //    protected void onCreate(Bundle savedInstanceState) {
@@ -30,17 +31,19 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 //    }
 
 
-
     private static String TAG = MainActivity.class.getSimpleName();
 
     private Toolbar mToolbar;
     private FragmentDrawer drawerFragment;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
 
         setSupportActionBar(mToolbar);
@@ -75,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             return true;
         }
 
-        if(id == R.id.action_search){
+        if (id == R.id.action_search) {
             Toast.makeText(getApplicationContext(), "Search action is selected!", Toast.LENGTH_SHORT).show();
             return true;
         }

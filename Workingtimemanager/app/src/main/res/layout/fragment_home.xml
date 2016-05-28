@@ -19,14 +19,15 @@
             android:id="@+id/label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
             android:fontFamily="sans-serif-thin"
             android:gravity="center_horizontal"
             android:text="16:58"
             android:textColor="@android:color/white"
             android:textSize="80dp"
-            android:textStyle="normal" />
+            android:textStyle="normal"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp" />
 
         <TextView
             android:id="@+id/textView2"

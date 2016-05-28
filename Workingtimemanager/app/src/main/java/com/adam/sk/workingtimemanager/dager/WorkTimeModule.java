@@ -1,5 +1,8 @@
 package com.adam.sk.workingtimemanager.dager;
 
+import android.app.Application;
+import android.content.Context;
+
 import com.adam.sk.workingtimemanager.controller.TimeController;
 
 import javax.inject.Singleton;
@@ -12,6 +15,18 @@ import dagger.Provides;
  */
 @Module
 public class WorkTimeModule {
+
+    private final Application application;
+
+    public WorkTimeModule(Application application) {
+        this.application = application;
+    }
+
+    @Provides
+    Context provideContext(){
+        return application;
+    }
+
 
     @Provides
     @Singleton
