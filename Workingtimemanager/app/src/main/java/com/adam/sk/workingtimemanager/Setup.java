@@ -18,7 +18,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.support.v4.app.DialogFragment;
+import android.widget.Toast;
 
+import com.adam.sk.workingtimemanager.controller.TimeController;
 import com.adam.sk.workingtimemanager.dager.property.Util;
 import com.adam.sk.workingtimemanager.service.UpdaterService;
 import com.android.datetimepicker.date.DatePickerDialog;
@@ -107,9 +109,13 @@ public class Setup extends Fragment {
             hours = hours + minutes;
             try {
                 Util.setProperty(hours);
+                TimeController.WORK_PERIOD = Long.valueOf(Util.getProperty());
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            Toast.makeText(thisContext.getApplicationContext(),"New workTime Period saved: " + timeText , Toast.LENGTH_SHORT).show();
+
         });
 
         start.setOnClickListener(v -> startUpdateService(v));

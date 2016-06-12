@@ -89,7 +89,7 @@ public class WorkTimeRecordListAdapter extends BaseAdapter {
                     Long workedHours = workTimeRecord.getLeaveDate().getTime() - workTimeRecord.getArrivalDate().getTime();
                     holder.workTime.setText(sdf.format(new Date(workedHours - 3600000l)).toString());
                 } else {
-                    holder.workTime.setText("You are in work");
+                    holder.workTime.setText("In work");
                 }
             } catch (Exception e) {
                 e.printStackTrace();

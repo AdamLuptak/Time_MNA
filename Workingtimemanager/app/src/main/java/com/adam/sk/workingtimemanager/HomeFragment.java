@@ -14,10 +14,13 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.adam.sk.workingtimemanager.controller.TimeController;
 import com.adam.sk.workingtimemanager.dager.property.Util;
+import com.adam.sk.workingtimemanager.entity.WorkTimeRecord;
 import com.adam.sk.workingtimemanager.service.UpdaterService;
 
 import org.joda.time.DateTime;
@@ -43,6 +46,12 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.textView4)
     TextView goHomeOv;
 
+    @BindView(R.id.logo)
+    ImageView logo;
+
+    @BindView(R.id.stopLogo)
+    ImageView logoStop;
+
     @Inject
     public TimeController timeController;
 
@@ -57,8 +66,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
+        DateTime today = new DateTime();
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         thisContext = container.getContext();
         ButterKnife.bind(this, rootView);
@@ -68,17 +76,18 @@ public class HomeFragment extends Fragment {
         final Animation animRotate = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_rotate);
         CircleButton btnScale = (CircleButton) rootView.findViewById(R.id.button2);
 
+        //TODO treba osetrit ze ked neni v DB posledny zaznam z predchadzajuceho dna treba zapnut rovno Edit lost worktime records
+
+
+        timeLogicShow(today);
+
         btnScale.setOnClickListener(v -> {
             v.startAnimation(animRotate);
             v.getResources();
-            CircleButton btnScale1 = (CircleButton) v.findViewById(R.id.button2);
-            DateTime today = new DateTime();
+            logo.setImageResource(R.drawable.ic_access_time_white_48dp);
             timeController.saveWorkTime(today);
             timeController.calculateTime(today);
-
-            goHome.setText(timeController.getGoHomeTime());
-            goHomeOv.setText(timeController.getGoHomeTimeOv());
-            overTime.setText(timeController.getOverTime());
+            timeLogicShow(today);
         });
 
         String workTimePeriodString = null;
@@ -88,11 +97,38 @@ public class HomeFragment extends Fragment {
             e.printStackTrace();
         }
         timeController.WORK_PERIOD = Long.valueOf(workTimePeriodString);
-        goHome.setText("00:00");
-        goHomeOv.setText("00:00");
-        overTime.setText("00:00");
         // Inflate the layout for this fragment
         return rootView;
+    }
+
+    private void timeLogicShow(DateTime today) {
+        WorkTimeRecord workTimeRecord = timeController.findWorkTimeForThisDay();
+
+        if (!(workTimeRecord == null)) {
+            Toast.makeText(thisContext.getApplicationContext(), "You are in work", Toast.LENGTH_LONG).show();
+            logo.setImageResource(R.drawable.ic_date_range_white_48px);
+            logoStop.setVisibility(View.VISIBLE);
+            timeController.calculateTime(today);
+            updateTimeUI();
+        } else {
+            logoStop.setVisibility(View.INVISIBLE);
+            WorkTimeRecord lastWorkTimeRecordNull = timeController.getLastWorkTimeRecordNull(today.getMillis());
+            if (lastWorkTimeRecordNull == null) {
+                Toast.makeText(thisContext.getApplicationContext(), "Welcome new day", Toast.LENGTH_LONG).show();
+                goHome.setText("00:00");
+                goHomeOv.setText("00:00");
+                overTime.setText("00:00");
+            } else {
+                timeController.calculateTime(today);
+                updateTimeUI();
+            }
+        }
+    }
+
+    private void updateTimeUI() {
+        goHome.setText(timeController.getGoHomeTime());
+        goHomeOv.setText(timeController.getGoHomeTimeOv());
+        overTime.setText(timeController.getOverTime());
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.adam.sk.workingtimemanager.controller.TimeController;
 import com.adam.sk.workingtimemanager.dager.property.Util;
+import com.adam.sk.workingtimemanager.entity.Property;
 
 import java.io.IOException;
 
@@ -36,7 +37,10 @@ public class WorkTimeModule {
     TimeController provideWorTimeController() {
         TimeController timeController = new TimeController();
         try {
-            Util.setProperty(30600000l);
+            String workTimeInterval = Util.getProperty();
+            if(workTimeInterval == null) {
+                Util.setProperty(30600000l);
+            }
             timeController.WORK_PERIOD = Long.valueOf(Util.getProperty());
         } catch (IOException e) {
             e.printStackTrace();

@@ -78,7 +78,7 @@ public class TimeController implements ITimeController {
         }
     }
 
-    private WorkTimeRecord findWorkTimeForThisDay() {
+    public WorkTimeRecord findWorkTimeForThisDay() {
         return Select.from(WorkTimeRecord.class).where(Condition.prop("leave_date").isNull()).groupBy("arrival_date").first();
     }
 
@@ -99,13 +99,13 @@ public class TimeController implements ITimeController {
     @Override
     public String getOverTime() {
         return String.format("%02d:%02d", TimeUnit.MILLISECONDS.toHours(overTimeMillis),
-                TimeUnit.MILLISECONDS.toMinutes(overTimeMillis) % TimeUnit.HOURS.toMinutes(1));
+                TimeUnit.MILLISECONDS.toMinutes(Math.abs(overTimeMillis)) % TimeUnit.HOURS.toMinutes(1));
 
     }
 
     long workTimePart = 0;
 
-    private WorkTimeRecord getLastWorkTimeRecordNull(long fridayCome) {
+    public WorkTimeRecord getLastWorkTimeRecordNull(long fridayCome) {
         DateTime fridayComeDate = new DateTime(fridayCome).withHourOfDay(0).withSecondOfMinute(0);
         return Select.from(WorkTimeRecord.class).where(Condition.prop("arrival_date").gt(fridayComeDate.toDate().getTime())).groupBy("arrival_date").first();
     }
