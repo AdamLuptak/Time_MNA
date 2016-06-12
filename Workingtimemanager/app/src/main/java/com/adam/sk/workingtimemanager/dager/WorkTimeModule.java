@@ -4,6 +4,9 @@ import android.app.Application;
 import android.content.Context;
 
 import com.adam.sk.workingtimemanager.controller.TimeController;
+import com.adam.sk.workingtimemanager.dager.property.Util;
+
+import java.io.IOException;
 
 import javax.inject.Singleton;
 
@@ -23,15 +26,22 @@ public class WorkTimeModule {
     }
 
     @Provides
-    Context provideContext(){
+    Context provideContext() {
         return application;
     }
 
 
     @Provides
     @Singleton
-    TimeController provideWorTimeController(){
-        return new TimeController();
+    TimeController provideWorTimeController() {
+        TimeController timeController = new TimeController();
+        try {
+            Util.setProperty(30600000l);
+            timeController.WORK_PERIOD = Long.valueOf(Util.getProperty());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return timeController;
     }
 
 }

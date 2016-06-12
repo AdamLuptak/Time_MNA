@@ -42,8 +42,18 @@
     <string name="list_product_work_time" formatted="false">%s</string>
 
     <string name="productid_label">Code</string>
-    <string name="arrival_time_label">ArrivalTime</string>
+    <string name="arrival_time_label">Work Time Period</string>
     <string name="leave_time_label">LeaveTime</string>
     <string name="day_of_week_label">dayOfWeek</string>
     <string name="work_time_label">dayOfWeek</string>
+
+    <string name="datepicker">Change Date</string>
+    <string name="timepicker">Change Time</string>
+    <string name="arrivalSet">Arrival WorkTime</string>
+    <string name="leaveSet">Leave WorkTime</string>
+    <string name="workTimePeriod">30600000</string>string>
+
+    <string name="startService">Start service</string>
+    <string name="stopService">Stop service</string>
+
 </resources>

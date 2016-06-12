@@ -1,5 +1,8 @@
 package com.adam.sk.workingtimemanager;
 
+import android.support.test.runner.AndroidJUnit4;
+import android.test.suitebuilder.annotation.LargeTest;
+
 import com.adam.sk.workingtimemanager.controller.TimeController;
 import com.adam.sk.workingtimemanager.entity.WorkTimeRecord;
 import com.annimon.stream.Stream;
@@ -14,11 +17,13 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.Date;
 import java.util.List;
 
-
+@RunWith(AndroidJUnit4.class)
+@LargeTest
 public class TimeControllerTest {
 
     public static final long ARRIVAL_DATE_MILLIS = 1451646000000l;
@@ -162,6 +167,8 @@ public class TimeControllerTest {
 
     @Test
     public void testSaveWorkTime() throws Exception {
+        this.cleanDb();
+
         TimeController timeController = new TimeController();
 
         arrivalDate = new Date(ARRIVAL_DATE_MILLIS);

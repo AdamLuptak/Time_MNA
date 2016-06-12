@@ -156,14 +156,12 @@
             android:src="@drawable/ic_alarm_add_white_24dp" />
     </RelativeLayout>
 
-
     <at.markushi.ui.CircleButton
         android:id="@+id/button2"
         android:layout_width="65dip"
         android:layout_height="65dip"
         android:layout_alignEnd="@+id/relativeLayout3"
         android:layout_alignParentBottom="true"
-
         android:layout_alignRight="@+id/relativeLayout3"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
@@ -171,6 +169,23 @@
         android:src="@drawable/ic_add_white_48px"
         app:cb_color="@color/textColorPrimary" />
 
+    Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/button"
+        android:layout_above="@+id/button2"
+        android:layout_alignLeft="@+id/relativeLayout3"
+        android:layout_alignStart="@+id/relativeLayout3"
+        android:layout_marginBottom="55dp" />
+
+    Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:layout_alignTop="@+id/button"
+        android:layout_toLeftOf="@+id/button2"
+        android:layout_toStartOf="@+id/button2" />
 
 </RelativeLayout>
 

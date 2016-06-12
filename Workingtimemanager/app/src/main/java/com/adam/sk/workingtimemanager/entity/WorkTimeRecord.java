@@ -6,9 +6,10 @@ import com.orm.dsl.Unique;
 
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class WorkTimeRecord extends SugarRecord {
+public class WorkTimeRecord extends SugarRecord implements Serializable {
 
     @NotNull
     @Unique

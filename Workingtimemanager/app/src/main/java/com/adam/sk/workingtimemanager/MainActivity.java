@@ -1,5 +1,6 @@
 package com.adam.sk.workingtimemanager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,24 +13,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.adam.sk.workingtimemanager.controller.TimeController;
+import com.adam.sk.workingtimemanager.dager.property.Util;
 
-import javax.inject.Inject;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
-
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//        JodaTimeAndroid.init(this);
-//
-//        WorkTimeComponent component = DaggerWorkTimeComponent.builder().workTimeModule(new WorkTimeModule()).build();
-//        timeController = component.provideWorTimeController();
-//        timeController.saveWorkTime(new DateTime(new Date()));
-//    }
-
 
     private static String TAG = MainActivity.class.getSimpleName();
 
@@ -39,9 +27,6 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -53,11 +38,15 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
         drawerFragment.setDrawerListener(this);
-
         // display the first navigation drawer view on app launch
-        displayView(0);
+        Intent intentEdit = this.getIntent();
+        String inWorkBefore = intentEdit.getStringExtra("showRecords");
+        if (inWorkBefore == null) {
+            displayView(0);
+        } else {
+            displayView(Integer.valueOf(inWorkBefore));
+        }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -116,9 +105,9 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.container_body, fragment);
             fragmentTransaction.commit();
-
             // set the toolbar title
             getSupportActionBar().setTitle(title);
         }
     }
+
 }

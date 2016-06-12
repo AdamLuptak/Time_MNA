@@ -1,7 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <ListView
@@ -21,8 +21,8 @@
         android:layout_height="200dp"
         android:layout_gravity="right|bottom"
         android:layout_margin="16dp"
-        fab:fab_colorNormal="@color/colorPrimary"
         android:src="@drawable/ic_add_white_48px"
+        fab:fab_colorNormal="@color/colorPrimary"
 
         />
 

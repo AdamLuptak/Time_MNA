@@ -5,12 +5,13 @@ import com.adam.sk.workingtimemanager.dager.WorkTimeComponent;
 import com.adam.sk.workingtimemanager.dager.WorkTimeModule;
 import com.orm.SugarApp;
 
-/**
- * Created by root on 28.5.2016.
- */
 public class Main extends SugarApp {
 
     WorkTimeComponent component;
+
+    public Main(){
+        super();
+    }
 
     @Override
     public void onCreate() {

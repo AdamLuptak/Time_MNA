@@ -1,19 +1,28 @@
 package com.adam.sk.workingtimemanager;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.adam.sk.workingtimemanager.controller.TimeController;
+import com.adam.sk.workingtimemanager.dager.property.Util;
+import com.adam.sk.workingtimemanager.service.UpdaterService;
 
 import org.joda.time.DateTime;
+
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -72,10 +81,16 @@ public class HomeFragment extends Fragment {
             overTime.setText(timeController.getOverTime());
         });
 
+        String workTimePeriodString = null;
+        try {
+            workTimePeriodString = Util.getProperty();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        timeController.WORK_PERIOD = Long.valueOf(workTimePeriodString);
         goHome.setText("00:00");
         goHomeOv.setText("00:00");
         overTime.setText("00:00");
-
         // Inflate the layout for this fragment
         return rootView;
     }
@@ -89,4 +104,6 @@ public class HomeFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
     }
+
+
 }

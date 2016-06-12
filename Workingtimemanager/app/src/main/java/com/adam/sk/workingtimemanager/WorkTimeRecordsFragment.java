@@ -2,6 +2,7 @@ package com.adam.sk.workingtimemanager;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.widget.ListView;
 import com.adam.sk.workingtimemanager.entity.WorkTimeRecord;
 import com.melnykov.fab.FloatingActionButton;
 
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -28,7 +30,6 @@ public class WorkTimeRecordsFragment extends Fragment {
 
     @BindView(R.id.fab)
     public FloatingActionButton fabButton;
-
 
     public WorkTimeRecordsFragment() {
         // Required empty public constructor
@@ -66,11 +67,21 @@ public class WorkTimeRecordsFragment extends Fragment {
         listViewWorkTimerecord.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Intent intent = new Intent(WorkTimeRecordListActivity.this,
-//                        WorkTimeRecordEditActivity.class);
-//                intent.putExtra("WorkTimeRecord", (WorkTimeRecord) parent.getItemAtPosition(position));
-//                startActivityForResult(intent, 0);
-//                finish();
+                Intent intent = new Intent(thisContext,
+                        WorkTimeRecordEditActivity.class);
+                intent.putExtra("WorkTimeRecord", (WorkTimeRecord) parent.getItemAtPosition(position));
+                startActivityForResult(intent, 0);
+            }
+        });
+
+        fabButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(thisContext,
+                        WorkTimeRecordEditActivity.class);
+                WorkTimeRecord workTimeRecord = new WorkTimeRecord(new Date(), new Date());
+                intent.putExtra("WorkTimeRecord",workTimeRecord);
+                startActivityForResult(intent, 0);
             }
         });
 
