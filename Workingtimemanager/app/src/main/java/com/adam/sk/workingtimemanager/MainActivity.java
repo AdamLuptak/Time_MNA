@@ -13,10 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.adam.sk.workingtimemanager.dager.property.Util;
-
-import java.io.IOException;
-
 public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
 
     private static String TAG = MainActivity.class.getSimpleName();
@@ -80,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         displayView(position);
     }
 
-    private void displayView(int position) {
+    public void displayView(int position) {
         Fragment fragment = null;
         String title = getString(R.string.app_name);
         switch (position) {

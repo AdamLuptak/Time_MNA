@@ -26,6 +26,7 @@ import com.adam.sk.workingtimemanager.service.UpdaterService;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -77,7 +78,11 @@ public class HomeFragment extends Fragment {
         CircleButton btnScale = (CircleButton) rootView.findViewById(R.id.button2);
 
         //TODO treba osetrit ze ked neni v DB posledny zaznam z predchadzajuceho dna treba zapnut rovno Edit lost worktime records
+        List<WorkTimeRecord> yesterdayFoCorection = timeController.getYesterdayFoCorection(today);
 
+        if(!(yesterdayFoCorection.isEmpty())){
+            ((MainActivity)getActivity()).displayView(1);
+        }
 
         timeLogicShow(today);
 

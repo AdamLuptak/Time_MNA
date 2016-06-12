@@ -158,6 +158,7 @@ public class Setup extends Fragment {
     }
 
     public void startUpdateService(View view) {
+        Toast.makeText(thisContext.getApplicationContext(),"Service start"  , Toast.LENGTH_SHORT).show();
         Intent actIntent = new Intent(thisContext, UpdaterService.class);
         PendingIntent pi = PendingIntent.getService(thisContext, 0, actIntent, 0);
         Log.e("sdfs", "start service");
@@ -169,6 +170,7 @@ public class Setup extends Fragment {
     }
 
     public void stopUpdateService(View view) {
+        Toast.makeText(thisContext.getApplicationContext(),"Service Stop" , Toast.LENGTH_SHORT).show();
         Log.e("sdfs", "stop service");
         Intent intentstop = new Intent(thisContext, UpdaterService.class);
         AlarmManager alarmManager = (AlarmManager) thisContext.getSystemService(thisContext.ALARM_SERVICE);

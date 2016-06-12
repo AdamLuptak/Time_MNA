@@ -1,32 +1,18 @@
 package com.adam.sk.workingtimemanager.controller;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.adam.sk.workingtimemanager.controller.api.ITimeController;
-import com.adam.sk.workingtimemanager.dager.WorkTimeComponent;
-import com.adam.sk.workingtimemanager.dager.property.Util;
 import com.adam.sk.workingtimemanager.entity.WorkTimeRecord;
 import com.annimon.stream.Stream;
 import com.orm.query.Condition;
 import com.orm.query.Select;
 
-import junit.framework.Assert;
-
-import net.danlew.android.joda.JodaTimeAndroid;
-
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
-
-import dagger.Component;
 
 public class TimeController implements ITimeController {
 
@@ -81,7 +67,6 @@ public class TimeController implements ITimeController {
     public WorkTimeRecord findWorkTimeForThisDay() {
         return Select.from(WorkTimeRecord.class).where(Condition.prop("leave_date").isNull()).groupBy("arrival_date").first();
     }
-
 
     SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
 
@@ -155,4 +140,10 @@ public class TimeController implements ITimeController {
     public void setGoHomeMillis(Long goHomeMillis) {
         this.goHomeMillis = goHomeMillis;
     }
+
+    public List<WorkTimeRecord> getYesterdayFoCorection(DateTime today){
+        DateTime yesterday = today.minusDays(1).withHourOfDay(23).withSecondOfMinute(59);;
+        return Select.from(WorkTimeRecord.class).where(Condition.prop("arrival_date").lt(yesterday.toDate().getTime()),Condition.prop("leave_date").isNull()).list();
+    }
+
 }
