@@ -83,8 +83,16 @@ public class TimeController implements ITimeController {
 
     @Override
     public String getOverTime() {
-        return String.format("%02d:%02d", TimeUnit.MILLISECONDS.toHours(overTimeMillis),
-                TimeUnit.MILLISECONDS.toMinutes(Math.abs(overTimeMillis)) % TimeUnit.HOURS.toMinutes(1));
+        String minusSimbol = "";
+
+        long hours = TimeUnit.MILLISECONDS.toMinutes(overTimeMillis) % TimeUnit.HOURS.toMinutes(1);
+        long minutes = TimeUnit.MILLISECONDS.toHours(overTimeMillis);
+        if(hours <= 0 && minutes < 0){
+          minusSimbol += "-";
+        }
+
+        return String.format(minusSimbol + "%02d:%02d", Math.abs(minutes) ,
+                Math.abs(hours));
 
     }
 

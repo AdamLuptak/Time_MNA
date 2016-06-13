@@ -1,19 +1,14 @@
 package com.adam.sk.workingtimemanager;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,7 +16,6 @@ import android.widget.Toast;
 import com.adam.sk.workingtimemanager.controller.TimeController;
 import com.adam.sk.workingtimemanager.dager.property.Util;
 import com.adam.sk.workingtimemanager.entity.WorkTimeRecord;
-import com.adam.sk.workingtimemanager.service.UpdaterService;
 
 import org.joda.time.DateTime;
 
@@ -77,7 +71,6 @@ public class HomeFragment extends Fragment {
         final Animation animRotate = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_rotate);
         CircleButton btnScale = (CircleButton) rootView.findViewById(R.id.button2);
 
-        //TODO treba osetrit ze ked neni v DB posledny zaznam z predchadzajuceho dna treba zapnut rovno Edit lost worktime records
         List<WorkTimeRecord> yesterdayFoCorection = timeController.getYesterdayFoCorection(today);
 
         if(!(yesterdayFoCorection.isEmpty())){

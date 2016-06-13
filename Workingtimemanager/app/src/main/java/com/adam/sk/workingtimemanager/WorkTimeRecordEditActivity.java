@@ -63,10 +63,7 @@ public class WorkTimeRecordEditActivity extends Activity implements DatePickerDi
     @BindView(R.id.leaveTime)
     TextView leaveTime;
     private WorkTimeRecord workTimeRecord;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
+
     private GoogleApiClient client;
 
     @Override
@@ -151,7 +148,7 @@ public class WorkTimeRecordEditActivity extends Activity implements DatePickerDi
     }
 
     private void saveWorkTime() {
-        workTimeRecord.save();
+        workTimeRecord.update();
     }
 
     public void goBack() {
