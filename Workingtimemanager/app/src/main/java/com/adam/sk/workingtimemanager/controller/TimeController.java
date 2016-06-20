@@ -83,17 +83,15 @@ public class TimeController implements ITimeController {
 
     @Override
     public String getOverTime() {
-        String minusSimbol = "";
+        String minusSymbol = "";
 
-        long hours = TimeUnit.MILLISECONDS.toMinutes(overTimeMillis) % TimeUnit.HOURS.toMinutes(1);
-        long minutes = TimeUnit.MILLISECONDS.toHours(overTimeMillis);
-        if(hours <= 0 && minutes < 0){
-          minusSimbol += "-";
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(overTimeMillis) % TimeUnit.HOURS.toMinutes(1);
+        long hours = TimeUnit.MILLISECONDS.toHours(overTimeMillis);
+        if (hours <= 0 && minutes < 0) {
+            minusSymbol += "-";
         }
 
-        return String.format(minusSimbol + "%02d:%02d", Math.abs(minutes) ,
-                Math.abs(hours));
-
+        return String.format(minusSymbol + "%02d:%02d", Math.abs(hours), Math.abs(minutes));
     }
 
     long workTimePart = 0;
@@ -149,9 +147,10 @@ public class TimeController implements ITimeController {
         this.goHomeMillis = goHomeMillis;
     }
 
-    public List<WorkTimeRecord> getYesterdayFoCorection(DateTime today){
-        DateTime yesterday = today.minusDays(1).withHourOfDay(23).withSecondOfMinute(59);;
-        return Select.from(WorkTimeRecord.class).where(Condition.prop("arrival_date").lt(yesterday.toDate().getTime()),Condition.prop("leave_date").isNull()).list();
+    public List<WorkTimeRecord> getYesterdayFoCorection(DateTime today) {
+        DateTime yesterday = today.minusDays(1).withHourOfDay(23).withSecondOfMinute(59);
+        ;
+        return Select.from(WorkTimeRecord.class).where(Condition.prop("arrival_date").lt(yesterday.toDate().getTime()), Condition.prop("leave_date").isNull()).list();
     }
 
 }

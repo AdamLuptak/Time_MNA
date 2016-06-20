@@ -56,4 +56,20 @@
     <string name="startService">Start service</string>
     <string name="stopService">Stop service</string>
 
+
+    <string name="startGps">Start Gps</string>
+    <string name="stopGps">Stop Gps</string>
+
+    <string name="expectedLatitude">Expected latitude</string>
+    <string name="expectedLongitude">Expected longitude</string>
+
+    <string name="gpsTracking">Gps tracking</string>
+    <string name="notification_tracking">Notification tracking</string>
+
+    <string name="workTimePeriodText">WorkTimePeriod</string>
+
+    <string name="err_msg_workTime">Enter ##:## format</string>
+    <string name="err_msg_latitude">Enter only number</string>
+    <string name="err_msg_longitude">Enter only number</string>
+
 </resources>

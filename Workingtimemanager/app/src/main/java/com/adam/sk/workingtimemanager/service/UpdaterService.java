@@ -23,7 +23,7 @@ import javax.inject.Inject;
 public class UpdaterService extends IntentService {
     public static final String ACTION_FOO = "com.example.aluptak.androidrobo.services.action.FOO";
     public static final String ACTION_BAZ = "com.example.aluptak.androidrobo.services.action.BAZ";
-
+    public static final String ACTION_ALARM_RECEIVER = "updateService";
     // TODO: Rename parameters
     public static final String EXTRA_PARAM1 = "com.example.aluptak.androidrobo.services.extra.PARAM1";
     public static final String EXTRA_PARAM2 = "com.example.aluptak.androidrobo.services.extra.PARAM2";

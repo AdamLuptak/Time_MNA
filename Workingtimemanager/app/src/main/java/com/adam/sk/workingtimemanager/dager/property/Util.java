@@ -24,10 +24,13 @@ public class Util {
     private static Property property;
 
     public static String getProperty() throws IOException {
-
+        String propertyString = "30600000";
         Property property = Select.from(Property.class)
                 .first();
-        return String.valueOf(property.getWorkTimePeriod());
+        if (!(property == null)) {
+            propertyString = String.valueOf(property.getWorkTimePeriod());
+        }
+        return propertyString;
     }
 
     public static void setProperty(Long workTimeLong) throws IOException {

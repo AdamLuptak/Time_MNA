@@ -80,7 +80,7 @@ public class WorkTimeRecordListAdapter extends BaseAdapter {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(workTimeRecord.getArrivalDate());
                 String dayString = this.getNameOfDayint(cal.get(Calendar.DAY_OF_WEEK));
-                holder.dayOfWeek.setText(dayString + sdfday.format(workTimeRecord.getArrivalDate()));
+                holder.dayOfWeek.setText(dayString + " " + sdfday.format(workTimeRecord.getArrivalDate()));
                 if (workTimeRecord.getLeaveDate() != null) {
                     holder.leaveTime.setText(String
                             .format(_context.getString(
