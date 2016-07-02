@@ -1,11 +1,9 @@
 package com.adam.sk.workingtimemanager.service;
 
 import android.Manifest;
-import android.app.IntentService;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -13,26 +11,37 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 
+import com.adam.sk.workingtimemanager.Main;
+import com.adam.sk.workingtimemanager.controller.LocationController;
+import com.adam.sk.workingtimemanager.controller.TimeController;
 import com.adam.sk.workingtimemanager.entity.WorkTimeRecord;
+
+import org.joda.time.DateTime;
 
 import java.util.List;
 
+import javax.inject.Inject;
 
 public class LocationService extends Service {
 
     private static final String TAG = "BOOMBOOMTESTGPS";
     private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 1000;
-    private static final float LOCATION_DISTANCE = 10f;
-    public static final String SHARED_PREFERENCES_NAME = "com.osmand.settings";
-    public static final String LATITUDE = "latitude";
-    public static final String LONGITUDE = "longitude";
+    private static final float LOCATION_DISTANCE = 5f;
+    public static final String ACTION_ALARM_RECEIVER = "locationService";
+
+
+
+    @Inject
+    LocationController locationController;
+
+    @Inject
+    TimeController timeController;
 
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
+        private boolean inWork = false;
 
         public LocationListener(String provider) {
             Log.e(TAG, "LocationListener " + provider);
@@ -44,10 +53,26 @@ public class LocationService extends Service {
             Log.e(TAG, "onLocationChanged: " + location);
             List workTimeRecords = WorkTimeRecord.listAll(WorkTimeRecord.class);
 
-            SharedPreferences prefs = getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_WORLD_READABLE);
-            double lat = (double) prefs.getFloat(LATITUDE, 0);
-            double lon = (double) prefs.getFloat(LONGITUDE, 0);
-            Log.e(TAG, String.valueOf(lat));
+            Location workLocation = locationController.loadLocation();
+
+            double distance = workLocation.distanceTo(location);
+
+            Log.e(TAG, String.valueOf(distance));
+
+            double threshold = Double.valueOf(locationController.getThresholdDistance());
+
+            if (distance < threshold) {
+                if (!(inWork)) {
+                    timeController.saveWorkTime(new DateTime());
+                    Log.e(TAG, "Came to work");
+                    inWork = true;
+                } else {
+                    Log.e(TAG, "You are in work");
+                }
+            } else {
+                Log.e(TAG, "Leave work");
+                inWork = false;
+            }
             mLastLocation.set(location);
         }
 
@@ -107,6 +132,7 @@ public class LocationService extends Service {
             Log.d(TAG, "gps provider does not exist " + ex.getMessage());
         }
 
+        ((Main) getApplication()).getComponent().inject(this);
 
     }
 

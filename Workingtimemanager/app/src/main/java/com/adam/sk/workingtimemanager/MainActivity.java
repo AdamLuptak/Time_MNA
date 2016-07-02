@@ -2,16 +2,23 @@ package com.adam.sk.workingtimemanager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.adam.sk.workingtimemanager.controller.LocationController;
+import com.adam.sk.workingtimemanager.controller.TimeController;
+
+import javax.inject.Inject;
 
 public class MainActivity extends AppCompatActivity implements FragmentDrawer.FragmentDrawerListener {
 
@@ -21,11 +28,16 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
     private FragmentDrawer drawerFragment;
 
 
+    @Inject
+    LocationController locationController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        ((Main) this.getApplicationContext()).getComponent().inject(this);
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -34,13 +46,37 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), mToolbar);
         drawerFragment.setDrawerListener(this);
-        // display the first navigation drawer view on app launch
+
+        Intent intentEdit = workTimeCompletionProtection();
+
+        saveLocationFromAnotherApp(intentEdit);
+    }
+
+    @NonNull
+    private Intent workTimeCompletionProtection() {
         Intent intentEdit = this.getIntent();
         String inWorkBefore = intentEdit.getStringExtra("showRecords");
         if (inWorkBefore == null) {
             displayView(0);
         } else {
             displayView(Integer.valueOf(inWorkBefore));
+        }
+        return intentEdit;
+    }
+
+    private void saveLocationFromAnotherApp(Intent intentEdit) {
+        String action = intentEdit.getAction();
+        String type = intentEdit.getType();
+        String text = "";
+
+        if (Intent.ACTION_SEND.equals(action) && type != null && "text/plain".equals(type)) {
+            text = intentEdit.getStringExtra(Intent.EXTRA_TEXT);
+            if (text.indexOf("\n") >= 0) {
+                String lon = text.substring(0, text.indexOf(","));
+                String lat = text.substring(text.indexOf(",") + 1, text.indexOf("\n"));
+                locationController.saveLocation(lon, lat);
+                Log.e(TAG, "Save " + String.valueOf(lon) + " " + String.valueOf(lat));
+            }
         }
     }
 
@@ -53,13 +89,11 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            this.displayView(2);
             return true;
         }
 

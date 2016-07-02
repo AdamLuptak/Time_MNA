@@ -80,5 +80,13 @@ dependencies {
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
 
     compile 'com.android.support:design:23.2.0'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
 
+    compile 'org.apache.httpcomponents:httpcore:4.4.1'
+    compile 'org.apache.httpcomponents:httpclient:4.5'
+
+}
+
+android {
+    useLibrary 'org.apache.http.legacy'
 }

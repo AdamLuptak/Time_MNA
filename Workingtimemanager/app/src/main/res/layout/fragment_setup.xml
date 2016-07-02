@@ -141,9 +141,10 @@
         android:layout_height="wrap_content"
         android:checked="false"
         android:text="@string/notification_tracking"
-        android:layout_centerVertical="true"
+        android:layout_above="@+id/buttonUpdateWorkPeriod"
         android:layout_toRightOf="@+id/linearLayout6"
         android:layout_toEndOf="@+id/linearLayout6"
+        android:layout_marginBottom="125dp"
         android:layout_marginLeft="15dp" />
 
     <CheckBox
@@ -152,10 +153,34 @@
         android:layout_height="wrap_content"
         android:checked="false"
         android:text="@string/gpsTracking"
-        android:layout_below="@+id/notificationCheck"
+        android:layout_above="@+id/notificationCheck"
+        android:layout_toRightOf="@+id/linearLayout6"
+        android:layout_marginLeft="15dp" />
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/seekBar"
+        android:max="300"
+        android:longClickable="false"
+        android:progress="5"
+        android:indeterminate="false"
+        android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/linearLayout6"
         android:layout_toEndOf="@+id/linearLayout6"
-        android:layout_marginLeft="15dp" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="20 m"
+        android:id="@+id/distance"
+        android:layout_above="@+id/seekBar"
+        android:layout_toRightOf="@+id/linearLayout6"
+        android:layout_toEndOf="@+id/linearLayout6"
+        android:layout_marginLeft="25dp" />
 
 
 </RelativeLayout>

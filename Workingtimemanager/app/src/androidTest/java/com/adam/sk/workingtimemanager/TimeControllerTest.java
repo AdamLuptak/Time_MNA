@@ -122,7 +122,7 @@ public class TimeControllerTest {
 
         Assert.assertEquals("15:30", goHomeTime1);
         Assert.assertEquals("16:35", goHomeTimeOv);
-        Assert.assertEquals("-1:05", overTime);
+        Assert.assertEquals("-01:05", overTime);
 
         Long actulaWeekOverTimeReal = timeController.getWeekOverTime(today);
 

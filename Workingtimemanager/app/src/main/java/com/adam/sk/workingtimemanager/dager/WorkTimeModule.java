@@ -3,6 +3,7 @@ package com.adam.sk.workingtimemanager.dager;
 import android.app.Application;
 import android.content.Context;
 
+import com.adam.sk.workingtimemanager.controller.LocationController;
 import com.adam.sk.workingtimemanager.controller.TimeController;
 import com.adam.sk.workingtimemanager.dager.property.Util;
 import com.adam.sk.workingtimemanager.entity.Property;
@@ -38,7 +39,7 @@ public class WorkTimeModule {
         TimeController timeController = new TimeController();
         try {
             String workTimeInterval = Util.getProperty();
-            if(workTimeInterval == null) {
+            if (workTimeInterval == null) {
                 Util.setProperty(30600000l);
             }
             timeController.WORK_PERIOD = Long.valueOf(Util.getProperty());
@@ -47,5 +48,12 @@ public class WorkTimeModule {
         }
         return timeController;
     }
+
+    @Provides
+    @Singleton
+    LocationController providerLocationController() {
+        return new LocationController(application.getApplicationContext());
+    }
+
 
 }
