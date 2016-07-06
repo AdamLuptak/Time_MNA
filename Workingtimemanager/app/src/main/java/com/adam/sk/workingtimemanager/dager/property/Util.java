@@ -1,30 +1,17 @@
 package com.adam.sk.workingtimemanager.dager.property;
 
-import android.content.Context;
-import android.content.res.AssetManager;
-import android.util.Log;
-
 import com.adam.sk.workingtimemanager.entity.Property;
 import com.orm.query.Select;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Properties;
 
-/**
- * Created by root on 1.6.2016.
- */
 public class Util {
 
+    public static final String DEFAULT_WORK_PERIOD = "30600000";
     private static Property property;
 
     public static String getProperty() throws IOException {
-        String propertyString = "30600000";
+        String propertyString = DEFAULT_WORK_PERIOD;
         Property property = Select.from(Property.class)
                 .first();
         if (!(property == null)) {

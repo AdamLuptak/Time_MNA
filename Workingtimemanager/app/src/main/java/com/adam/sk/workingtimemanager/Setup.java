@@ -282,7 +282,6 @@ public class Setup extends Fragment {
         super.onAttach(context);
     }
 
-
     @Override
 
     public void onAttach(Activity activity) {

@@ -1,8 +1,5 @@
 package com.adam.sk.workingtimemanager.adapter;
 
-/**
- * Created by Ravi on 29/07/15.
- */
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +13,6 @@ import com.adam.sk.workingtimemanager.model.NavDrawerItem;
 
 import java.util.Collections;
 import java.util.List;
-
 
 public class NavigationDrawerAdapter extends RecyclerView.Adapter<NavigationDrawerAdapter.MyViewHolder> {
     List<NavDrawerItem> data = Collections.emptyList();

@@ -30,6 +30,7 @@ import butterknife.ButterKnife;
 
 
 public class HomeFragment extends Fragment {
+    public static final String DEFAULT_TIME_TEXT_VIEW = "00:00";
     Context thisContext;
 
     @BindView(R.id.label)
@@ -113,9 +114,9 @@ public class HomeFragment extends Fragment {
             WorkTimeRecord lastWorkTimeRecordNull = timeController.getLastWorkTimeRecordNull(today.getMillis());
             if (lastWorkTimeRecordNull == null) {
                 Toast.makeText(thisContext.getApplicationContext(), "Welcome new day", Toast.LENGTH_LONG).show();
-                goHome.setText("00:00");
-                goHomeOv.setText("00:00");
-                overTime.setText("00:00");
+                goHome.setText(DEFAULT_TIME_TEXT_VIEW);
+                goHomeOv.setText(DEFAULT_TIME_TEXT_VIEW);
+                overTime.setText(DEFAULT_TIME_TEXT_VIEW);
             } else {
                 timeController.calculateTime(today);
                 updateTimeUI();

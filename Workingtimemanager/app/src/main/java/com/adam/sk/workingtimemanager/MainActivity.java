@@ -72,8 +72,8 @@ public class MainActivity extends AppCompatActivity implements FragmentDrawer.Fr
         if (Intent.ACTION_SEND.equals(action) && type != null && "text/plain".equals(type)) {
             text = intentEdit.getStringExtra(Intent.EXTRA_TEXT);
             if (text.indexOf("\n") >= 0) {
-                String lon = text.substring(0, text.indexOf(","));
-                String lat = text.substring(text.indexOf(",") + 1, text.indexOf("\n"));
+                String lat = text.substring(0, text.indexOf(","));
+                String lon = text.substring(text.indexOf(",") + 1, text.indexOf("\n"));
                 locationController.saveLocation(lon, lat);
                 Log.e(TAG, "Save " + String.valueOf(lon) + " " + String.valueOf(lat));
             }

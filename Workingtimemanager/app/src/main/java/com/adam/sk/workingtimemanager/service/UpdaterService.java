@@ -37,8 +37,7 @@ public class UpdaterService extends IntentService {
 
     public UpdaterService() {
         super("UpdaterService");
-
-        Log.e(TAG, "vytvoreny service");
+        Log.d(TAG, "vytvoreny service");
     }
 
     @Override
@@ -50,27 +49,18 @@ public class UpdaterService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
+        mHandler.post(() -> {
 
-                Log.e(TAG, "idem zo servicu mal by som ist kazdych 15 sekund " + rob);
-                String goHomeOverTime = null;
-                String goHomeTime = null;
+            Log.d(TAG, "idem zo servicu mal by som ist kazdych 15 sekund " + rob);
+            DateTime timeNow = DateTime.now();
+            timeController = new TimeController();
+            timeController.calculateTime(timeNow);
 
-                List workTimeRecords = WorkTimeRecord.listAll(WorkTimeRecord.class);
-
-                DateTime timeNow = DateTime.now();
-                timeController = new TimeController();
-                timeController.calculateTime(timeNow);
-
-                if (timeController.getGoHomeMillis() <= timeNow.getMillis()) {
-                    notification("Go home time", "Go home time");
-                } else if (timeController.getGoHomeOvMillis() <= timeNow.getMillis()) {
-                    notification("Go home timeOv", "Go home time");
-                }
+            if (timeController.getGoHomeMillis() <= timeNow.getMillis()) {
+                notification("Go home time", "Go home time");
+            } else if (timeController.getGoHomeOvMillis() <= timeNow.getMillis()) {
+                notification("Go home timeOv", "Go home time");
             }
-
         });
     }
 

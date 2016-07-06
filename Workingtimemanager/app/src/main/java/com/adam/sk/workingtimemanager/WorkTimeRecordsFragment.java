@@ -47,9 +47,6 @@ public class WorkTimeRecordsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_work_time_records, container, false);
         thisContext = container.getContext();
         ButterKnife.bind(this, rootView);
-
-
-        // Inflate the layout for this fragment
         return rootView;
     }
 
@@ -57,12 +54,12 @@ public class WorkTimeRecordsFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-            List workTimeRecords = WorkTimeRecord.listAll(WorkTimeRecord.class);
-            WorkTimeRecordListAdapter workTimeRecordListAdapter = new WorkTimeRecordListAdapter(
-                    thisContext.getApplicationContext(), workTimeRecords);
-            listViewWorkTimerecord.setAdapter(workTimeRecordListAdapter);
+        List workTimeRecords = WorkTimeRecord.listAll(WorkTimeRecord.class);
+        WorkTimeRecordListAdapter workTimeRecordListAdapter = new WorkTimeRecordListAdapter(
+                thisContext.getApplicationContext(), workTimeRecords);
+        listViewWorkTimerecord.setAdapter(workTimeRecordListAdapter);
 
-            fabButton.attachToListView(listViewWorkTimerecord);
+        fabButton.attachToListView(listViewWorkTimerecord);
 
         listViewWorkTimerecord.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -80,12 +77,10 @@ public class WorkTimeRecordsFragment extends Fragment {
                 Intent intent = new Intent(thisContext,
                         WorkTimeRecordEditActivity.class);
                 WorkTimeRecord workTimeRecord = new WorkTimeRecord(new Date(), new Date());
-                intent.putExtra("WorkTimeRecord",workTimeRecord);
+                intent.putExtra("WorkTimeRecord", workTimeRecord);
                 startActivityForResult(intent, 0);
             }
         });
-
-
     }
 
     @Override

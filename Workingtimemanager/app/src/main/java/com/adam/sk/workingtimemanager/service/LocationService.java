@@ -31,8 +31,6 @@ public class LocationService extends Service {
     private static final float LOCATION_DISTANCE = 5f;
     public static final String ACTION_ALARM_RECEIVER = "locationService";
 
-
-
     @Inject
     LocationController locationController;
 
@@ -51,7 +49,6 @@ public class LocationService extends Service {
         @Override
         public void onLocationChanged(Location location) {
             Log.e(TAG, "onLocationChanged: " + location);
-            List workTimeRecords = WorkTimeRecord.listAll(WorkTimeRecord.class);
 
             Location workLocation = locationController.loadLocation();
 
@@ -131,9 +128,7 @@ public class LocationService extends Service {
         } catch (IllegalArgumentException ex) {
             Log.d(TAG, "gps provider does not exist " + ex.getMessage());
         }
-
         ((Main) getApplication()).getComponent().inject(this);
-
     }
 
     @Override
@@ -144,13 +139,6 @@ public class LocationService extends Service {
             for (int i = 0; i < mLocationListeners.length; i++) {
                 try {
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
                         return;
                     }
                     mLocationManager.removeUpdates(mLocationListeners[i]);

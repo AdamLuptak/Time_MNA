@@ -16,13 +16,18 @@ import java.util.concurrent.TimeUnit;
 
 public class TimeController implements ITimeController {
 
+    public static final String NEW_WORK_TIME_MESSAGE = "create new workTime";
+    public static final String UPDATE_WORK_TIME_MESSAGE = "update workTime";
+    public static final long DEFAULT_GO_HOME_TIME = 0l;
+    public static final String LEAVE_DATE = "leave_date";
+    public static final String ARRIVAL_DATE = "arrival_date";
+    public static final String HH_MM_FORMATTED = "HH:mm";
+    public static final String MINUS_DEFAULT_STRING = "";
+    public static final int DURATION_TO_ONE = 1;
+    public static final String MINUS_SYMBOL = "-";
     public static long WORK_PERIOD = 30600000;
 
     public static final String TAG = "TimeController";
-
-    private String goHomeTime;
-
-    private String goHomeTimeOV;
 
     private String overTime;
 
@@ -37,14 +42,14 @@ public class TimeController implements ITimeController {
         WorkTimeRecord lastWorkTimeRecord = findWorkTimeForThisDay();
 
         if (lastWorkTimeRecord == null) {
-            Log.d(TAG, "create new workTime");
+            Log.d(TAG, NEW_WORK_TIME_MESSAGE);
             WorkTimeRecord workTimeRecord = new WorkTimeRecord(date.toDate());
             workTimeRecord.save();
 
             calculateTime(date);
 
         } else {
-            Log.d(TAG, "update workTime");
+            Log.d(TAG, UPDATE_WORK_TIME_MESSAGE);
             lastWorkTimeRecord.setLeaveDate(date.toDate());
             lastWorkTimeRecord.save();
         }
@@ -56,8 +61,8 @@ public class TimeController implements ITimeController {
         WorkTimeRecord lastComeToWork = getLastWorkTimeRecordNull(date.getMillis());
 
         if (lastComeToWork == null) {
-            goHomeMillis = 0l;
-            goHomeOvMillis = 0l;
+            goHomeMillis = DEFAULT_GO_HOME_TIME;
+            goHomeOvMillis = DEFAULT_GO_HOME_TIME;
         } else {
             goHomeMillis = lastComeToWork.getArrivalDate().getTime() + WORK_PERIOD;
             goHomeOvMillis = goHomeMillis - this.overTimeMillis;
@@ -65,14 +70,13 @@ public class TimeController implements ITimeController {
     }
 
     public WorkTimeRecord findWorkTimeForThisDay() {
-        return Select.from(WorkTimeRecord.class).where(Condition.prop("leave_date").isNull()).groupBy("arrival_date").first();
+        return Select.from(WorkTimeRecord.class).where(Condition.prop(LEAVE_DATE).isNull()).groupBy(ARRIVAL_DATE).first();
     }
 
-    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+    SimpleDateFormat formatter = new SimpleDateFormat(HH_MM_FORMATTED);
 
     @Override
     public String getGoHomeTimeOv() {
-
         return formatter.format(new DateTime(goHomeOvMillis).toDate()).toString();
     }
 
@@ -83,14 +87,13 @@ public class TimeController implements ITimeController {
 
     @Override
     public String getOverTime() {
-        String minusSymbol = "";
+        String minusSymbol = MINUS_DEFAULT_STRING;
 
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(overTimeMillis) % TimeUnit.HOURS.toMinutes(1);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(overTimeMillis) % TimeUnit.HOURS.toMinutes(DURATION_TO_ONE);
         long hours = TimeUnit.MILLISECONDS.toHours(overTimeMillis);
         if (hours <= 0 && minutes < 0) {
-            minusSymbol += "-";
+            minusSymbol += MINUS_SYMBOL;
         }
-
         return String.format(minusSymbol + "%02d:%02d", Math.abs(hours), Math.abs(minutes));
     }
 
@@ -98,7 +101,7 @@ public class TimeController implements ITimeController {
 
     public WorkTimeRecord getLastWorkTimeRecordNull(long fridayCome) {
         DateTime fridayComeDate = new DateTime(fridayCome).withHourOfDay(0).withSecondOfMinute(0);
-        return Select.from(WorkTimeRecord.class).where(Condition.prop("arrival_date").gt(fridayComeDate.toDate().getTime())).groupBy("arrival_date").first();
+        return Select.from(WorkTimeRecord.class).where(Condition.prop(ARRIVAL_DATE).gt(fridayComeDate.toDate().getTime())).groupBy(ARRIVAL_DATE).first();
     }
 
     public Long getWeekOverTime(DateTime today) {
@@ -120,7 +123,7 @@ public class TimeController implements ITimeController {
     }
 
     private List<WorkTimeRecord> getWorkTimeRecordsRange(DateTime startOfWeek, DateTime endOfWeek) {
-        return Select.from(WorkTimeRecord.class).where(Condition.prop("arrival_date").gt(startOfWeek.toDate().getTime()), Condition.prop("arrival_date").lt(endOfWeek.toDate().getTime()), Condition.prop("leave_date").isNotNull()).groupBy("arrival_date").list();
+        return Select.from(WorkTimeRecord.class).where(Condition.prop(ARRIVAL_DATE).gt(startOfWeek.toDate().getTime()), Condition.prop(ARRIVAL_DATE).lt(endOfWeek.toDate().getTime()), Condition.prop(LEAVE_DATE).isNotNull()).groupBy(ARRIVAL_DATE).list();
     }
 
     public Long getOverTimeMillis() {
@@ -149,8 +152,7 @@ public class TimeController implements ITimeController {
 
     public List<WorkTimeRecord> getYesterdayFoCorection(DateTime today) {
         DateTime yesterday = today.minusDays(1).withHourOfDay(23).withSecondOfMinute(59);
-        ;
-        return Select.from(WorkTimeRecord.class).where(Condition.prop("arrival_date").lt(yesterday.toDate().getTime()), Condition.prop("leave_date").isNull()).list();
+        return Select.from(WorkTimeRecord.class).where(Condition.prop(ARRIVAL_DATE).lt(yesterday.toDate().getTime()), Condition.prop(ARRIVAL_DATE).isNull()).list();
     }
 
 }

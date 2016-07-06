@@ -6,7 +6,6 @@ import android.content.Context;
 import com.adam.sk.workingtimemanager.controller.LocationController;
 import com.adam.sk.workingtimemanager.controller.TimeController;
 import com.adam.sk.workingtimemanager.dager.property.Util;
-import com.adam.sk.workingtimemanager.entity.Property;
 
 import java.io.IOException;
 
@@ -15,9 +14,6 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 
-/**
- * Created by root on 20.5.2016.
- */
 @Module
 public class WorkTimeModule {
 
