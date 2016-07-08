@@ -2,12 +2,16 @@ package com.adam.sk.workingtimemanager.dager;
 
 import android.app.Application;
 import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
 
 import com.adam.sk.workingtimemanager.controller.LocationController;
 import com.adam.sk.workingtimemanager.controller.TimeController;
 import com.adam.sk.workingtimemanager.dager.property.Util;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.inject.Singleton;
 
@@ -51,5 +55,16 @@ public class WorkTimeModule {
         return new LocationController(application.getApplicationContext());
     }
 
+    @Provides
+    public LocationManager provideLocationManager() {
+        return (LocationManager) application.getSystemService(Context.LOCATION_SERVICE);
+    }
+
+    private List<Location> allLocations = new LinkedList<>();
+
+    @Provides
+    public List<Location> provideLocations() {
+        return allLocations;
+    }
 
 }

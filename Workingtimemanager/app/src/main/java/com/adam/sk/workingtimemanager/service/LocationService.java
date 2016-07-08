@@ -6,11 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.adam.sk.workingtimemanager.Main;
 import com.adam.sk.workingtimemanager.controller.LocationController;
@@ -23,12 +25,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class LocationService extends Service {
+public class LocationService extends Service implements LocationListener {
 
     private static final String TAG = "BOOMBOOMTESTGPS";
     private LocationManager mLocationManager = null;
-    private static final int LOCATION_INTERVAL = 1000;
-    private static final float LOCATION_DISTANCE = 5f;
+    private static final int LOCATION_INTERVAL = 0;
+    private static final float LOCATION_DISTANCE = 0;
     public static final String ACTION_ALARM_RECEIVER = "locationService";
 
     @Inject
@@ -37,62 +39,32 @@ public class LocationService extends Service {
     @Inject
     TimeController timeController;
 
-    private class LocationListener implements android.location.LocationListener {
-        Location mLastLocation;
-        private boolean inWork = false;
+    @Inject
+    LocationManager locationManager;
 
-        public LocationListener(String provider) {
-            Log.e(TAG, "LocationListener " + provider);
-            mLastLocation = new Location(provider);
-        }
 
-        @Override
-        public void onLocationChanged(Location location) {
-            Log.e(TAG, "onLocationChanged: " + location);
+    @Inject
+    List<Location> allLocations;
 
-            Location workLocation = locationController.loadLocation();
+    private boolean inWork = false;
+    Location mLastLocation;
 
-            double distance = workLocation.distanceTo(location);
 
-            Log.e(TAG, String.valueOf(distance));
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
 
-            double threshold = Double.valueOf(locationController.getThresholdDistance());
-
-            if (distance < threshold) {
-                if (!(inWork)) {
-                    timeController.saveWorkTime(new DateTime());
-                    Log.e(TAG, "Came to work");
-                    inWork = true;
-                } else {
-                    Log.e(TAG, "You are in work");
-                }
-            } else {
-                Log.e(TAG, "Leave work");
-                inWork = false;
-            }
-            mLastLocation.set(location);
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-            Log.e(TAG, "onProviderDisabled: " + provider);
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-            Log.e(TAG, "onProviderEnabled: " + provider);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            Log.e(TAG, "onStatusChanged: " + provider);
-        }
     }
 
-    LocationListener[] mLocationListeners = new LocationListener[]{
-            new LocationListener(LocationManager.GPS_PROVIDER),
-            new LocationListener(LocationManager.NETWORK_PROVIDER)
-    };
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -102,32 +74,69 @@ public class LocationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.e(TAG, "onStartCommand");
+        List<String> providers = locationManager.getAllProviders();
+        boolean atLeastOneProviderEnabled = false;
+        for (String provider : providers) {
+            if (locationManager.isProviderEnabled(provider)) {
+                try {
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return 0;
+                    }
+                    locationManager.requestLocationUpdates(provider, LOCATION_INTERVAL, LOCATION_DISTANCE, this);
+                    atLeastOneProviderEnabled = true;
+                } catch (Exception ex) {
+                    Log.i(TAG, "fail to remove location listners, ignore", ex);
+                }
+            }
+        }
+        if (!atLeastOneProviderEnabled) {
+        }
+
         super.onStartCommand(intent, flags, startId);
         return START_STICKY;
+    }
+
+    private void locationUpdated(Location location) {
+        allLocations.add(location);
+
+        Log.e(TAG, "onLocationChanged: " + location);
+
+        Location workLocation = locationController.loadLocation();
+
+        double distance = workLocation.distanceTo(location);
+
+        Log.e(TAG, String.valueOf(distance));
+
+        double threshold = Double.valueOf(locationController.getThresholdDistance());
+
+        if (distance < threshold) {
+            if (!(inWork)) {
+                timeController.saveWorkTime(new DateTime());
+                Log.e(TAG, "Came to work");
+                inWork = true;
+            } else {
+                Log.e(TAG, "You are in work");
+            }
+        } else {
+            Log.e(TAG, "Leave work");
+            if (inWork) {
+                timeController.saveWorkTime(new DateTime());
+            }
+            inWork = false;
+        }
+        mLastLocation.set(location);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        locationUpdated(location);
     }
 
     @Override
     public void onCreate() {
         Log.e(TAG, "onCreate");
-        initializeLocationManager();
-        try {
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                    mLocationListeners[1]);
-        } catch (java.lang.SecurityException ex) {
-            Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "network provider does not exist, " + ex.getMessage());
-        }
-        try {
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                    mLocationListeners[0]);
-        } catch (java.lang.SecurityException ex) {
-            Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "gps provider does not exist " + ex.getMessage());
-        }
+        mLastLocation = new Location(LocationManager.NETWORK_PROVIDER);
+        // initializeLocationManager();
         ((Main) getApplication()).getComponent().inject(this);
     }
 
@@ -136,15 +145,13 @@ public class LocationService extends Service {
         Log.e(TAG, "onDestroy");
         super.onDestroy();
         if (mLocationManager != null) {
-            for (int i = 0; i < mLocationListeners.length; i++) {
-                try {
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        return;
-                    }
-                    mLocationManager.removeUpdates(mLocationListeners[i]);
-                } catch (Exception ex) {
-                    Log.i(TAG, "fail to remove location listners, ignore", ex);
+            try {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
                 }
+                locationManager.removeUpdates(this);
+            } catch (Exception ex) {
+                Log.i(TAG, "fail to remove location listners, ignore", ex);
             }
         }
     }

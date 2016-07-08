@@ -166,12 +166,13 @@ public class Setup extends Fragment {
             }
         });
 
-
         gpsTrackingCheck.setOnClickListener(v -> {
             if (gpsTrackingCheck.isChecked()) {
                 startUpdateService(v, 1002, new Intent(thisContext, LocationService.class), LocationService.ACTION_ALARM_RECEIVER);
+
             } else {
-                stopUpdateService(v, 1002, new Intent(thisContext, LocationService.class), LocationService.ACTION_ALARM_RECEIVER);            }
+                stopUpdateService(v, 1002, new Intent(thisContext, LocationService.class), LocationService.ACTION_ALARM_RECEIVER);
+            }
         });
 
 
