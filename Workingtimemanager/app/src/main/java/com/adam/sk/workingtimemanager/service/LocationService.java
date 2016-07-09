@@ -82,6 +82,7 @@ public class LocationService extends Service implements LocationListener {
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                         return 0;
                     }
+                    mLastLocation = new Location(provider);
                     locationManager.requestLocationUpdates(provider, LOCATION_INTERVAL, LOCATION_DISTANCE, this);
                     atLeastOneProviderEnabled = true;
                 } catch (Exception ex) {
@@ -135,7 +136,6 @@ public class LocationService extends Service implements LocationListener {
     @Override
     public void onCreate() {
         Log.e(TAG, "onCreate");
-        mLastLocation = new Location(LocationManager.NETWORK_PROVIDER);
         // initializeLocationManager();
         ((Main) getApplication()).getComponent().inject(this);
     }
